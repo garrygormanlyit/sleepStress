@@ -36,3 +36,33 @@ noSleep[1:15, ]
 
 summary(noSleep)
 nrow(noSleep)
+
+# use this as an example
+hist(sleepData$SleepHrs, 
+     main = "Stress level from 1 to 4", 
+     col = "blue",
+     ylab = "Frequency",
+     xlab = "Stress Level")
+
+variables_of_interest <- c("SnoringRate", 
+                           "RespirationRate", 
+                           "BodyTemp", 
+                           "Movement", 
+                           "BloodOxygen",
+                           "REM",
+                           "SleepHrs",
+                           "HeartRate",
+                           "StressLevel",
+                           "REMinHrs")
+
+pairs(sleepData[variables_of_interest])
+
+# shows pos and neg correlations data in the data
+# when building a neural network you need correlations first 
+# to identify related variables
+install.packages("corrplot")
+library(corrplot)
+corrplot(corr = cor(sleepData),
+         t1.col = "Black",
+         method = "number",
+         t1.cex = 0.5)
