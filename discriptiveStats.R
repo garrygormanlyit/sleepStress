@@ -37,12 +37,68 @@ noSleep[1:15, ]
 summary(noSleep)
 nrow(noSleep)
 
-# use this as an example
-hist(sleepData$SleepHrs, 
-     main = "Stress level from 1 to 4", 
+opar <- par(no.readonly = TRUE) # records current settings for plots
+par(mfrow = c(3,3)) # plot side by side
+
+# to test for normal distribution
+hist(sleepData$SnoringRate, 
+     main = "Snoring Rate", 
      col = "blue",
      ylab = "Frequency",
-     xlab = "Stress Level")
+     xlab = "Snoring rate")
+
+hist(sleepData$SleepHrs, 
+     main = "Sleep hours", 
+     col = "blue",
+     ylab = "Frequency",
+     xlab = "Sleep hours")
+
+hist(sleepData$BodyTemp, 
+     main = "Body Temperature F", 
+     col = "blue",
+     ylab = "Frequency",
+     xlab = "Temperature")
+
+hist(sleepData$Movement, 
+     main = "Movement", 
+     col = "blue",
+     ylab = "Frequency",
+     xlab = "Movement")
+
+hist(sleepData$BloodOxygen, 
+     main = "Blood Oxygen %", 
+     col = "blue",
+     ylab = "Frequency",
+     xlab = "Blood Oxygen %")
+
+hist(sleepData$REM, 
+     main = "REM in minutes", 
+     col = "blue",
+     ylab = "Frequency",
+     xlab = "REM in minutes")
+
+hist(sleepData$HeartRate, 
+     main = "Heart rate in beats per minutes", 
+     col = "blue",
+     ylab = "Frequency",
+     xlab = "Heart rate")
+
+hist(sleepData$StressLevel, 
+     main = "Stress level 0-4", 
+     col = "blue",
+     ylab = "Frequency",
+     xlab = "Stress level")
+par(opar)
+
+# test for normality
+shapiro.test(sleepData$SnoringRate)
+shapiro.test(sleepData$SleepHrs)
+shapiro.test(sleepData$BodyTemp)
+shapiro.test(sleepData$Movement)
+shapiro.test(sleepData$BloodOxygen)
+shapiro.test(sleepData$REM)
+shapiro.test(sleepData$HeartRate)
+shapiro.test(sleepData$StressLevel)
 
 variables_of_interest <- c("SnoringRate", 
                            "RespirationRate", 
