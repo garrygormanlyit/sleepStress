@@ -34,7 +34,7 @@ trustedData
 nrow(trustedData)
 
 opar <- par(no.readonly = TRUE) # records current settings for plots
-par(mfrow = c(3,3)) # plot side by side
+par(mfrow = c(2,2)) # plot side by side
 
 # testing for normality
 hist(trustedData$SleepHrs, 
@@ -43,35 +43,11 @@ hist(trustedData$SleepHrs,
      ylab = "Frequency",
      xlab = "Sleep hours")
 
-hist(trustedData$SnoringRate, 
-     main = "Snoring Rate", 
-     col = "blue",
-     ylab = "Frequency",
-     xlab = "Snoring rate")
-
-hist(trustedData$RespirationRate, 
-     main = "Snoring Rate", 
-     col = "blue",
-     ylab = "Frequency",
-     xlab = "Snoring rate")
-
-hist(trustedData$BodyTemp, 
-     main = "Body Temperature in F", 
-     col = "blue",
-     ylab = "Frequency",
-     xlab = "Body Temp")
-
 hist(trustedData$Movement, 
      main = "Movement", 
      col = "blue",
      ylab = "Frequency",
      xlab = "Movement")
-
-hist(trustedData$BloodOxygen, 
-     main = "Blood oxygen level in %", 
-     col = "blue",
-     ylab = "Frequency",
-     xlab = "Blood oxygen level")
 
 hist(trustedData$REM, 
      main = "REM in minutes", 
@@ -85,14 +61,85 @@ hist(trustedData$HeartRate,
      ylab = "Frequency",
      xlab = "Heart rate")
 
+par(opar)
+par(mfrow = c(1,1))
+# StressLevel is categorical and ordinal therefore it must be factored to be analysed correctly
+sleepData$StressCat <- factor(sleepData$StressLevel, 
+                              labels = c("no stress", "mild stress", "moderated stress", "high stress", "extreme stress"),
+                              ordered = TRUE)
+
+# to analyse correlation of stressCat against HR
+# this demonstrates a correlation between the variables
+plot(sleepData$StressCat, sleepData$HeartRate, main = "Stress Category vs heart rate")
+
+# this histogram tells us nothing
 hist(trustedData$StressLevel, 
-     main = "Stress level fro 0 to 4", 
+    main = "Stress level from 0 to 4", 
      col = "blue",
      ylab = "Frequency",
      xlab = "Stress level")
+
+# use lattice library to resolve the matter
+# plot the distribution of Stress Category against heart rate
+library("lattice")
+attach(sleepData)
+histogram(~ HeartRate | StressCat,
+          data = sleepData,
+          main = "Distribution of Stress Category data",
+          xlab = "Heart rate in beats per minute",
+          ylab = "Stress Category")
+
+tapply(HeartRate, StressCat, mean)
+# report that the the mean of HR\no stress is 52.5 suggesting that HR\No stress may be normally distributed
+# report that the the mean of HR\mild stress is 57.5 suggesting that HR\mild stress may be normally distributed 
+# the mean of HR\no stress is 52.5 suggesting that HR\No stress may be normally distributed
+# the mean of HR\moderate stress is 62.5 suggesting that HR\moderate stress may be normally distributed
+# HR\High mean is 70 suggesting that is may be normally distributed
+# HR\extreme stress mean HR is 80 suggesting that it may be slightly negatively skewed
 par(opar)
+# Q-Q plot of HR
+qqnorm(HeartRate, main = "Q-Q plot of first dataset variable")
+qqline(HeartRate)
+# the points on Q-Q plot mostly fall on or close to the 45-degree reference line.
+# The main departure from this line occur at the high and low values
+par(mfrow = c(2,3))
+# Q-Q plot 
+with(sleepData, {qqnorm(HeartRate[StressCat == "no stress"],
+                          main = "No stress data") 
+  qqline(HeartRate[StressCat == "no stress"])})
+
+with(sleepData, {qqnorm(HeartRate[StressCat == "mild stress"],
+                        main = "mild stress data") 
+  qqline(HeartRate[StressCat == "mild stress"])})
+
+with(sleepData, {qqnorm(HeartRate[StressCat == "moderated stress"],
+                        main = "moderate stress data") 
+  qqline(HeartRate[StressCat == "moderated stress"])})
+
+with(sleepData, {qqnorm(HeartRate[StressCat == "high stress"],
+                        main = "high stress data") 
+  qqline(HeartRate[StressCat == "high stress"])})
+
+with(sleepData, {qqnorm(HeartRate[StressCat == "extreme stress"],
+                        main = "extreme stress data") 
+  qqline(HeartRate[StressCat == "extreme stress"])})
 
 
+# the points on Q-Q plot mostly fall on or close to the 45-degree reference line.
+# The main departure from this line occur at the high and low values
+
+with(sleepData, tapply(HeartRate, StressCat, shapiro.test))
+# all categories of stress fall below the cutoff p-value of 0.05 confirming that the data is not normally distributed 
+# this means that the data is non-parametric in nature and should be analysed by non-parametric means
+
+# after consulting the chart, i am examining a dependent continuous variable (HeartRate)
+# whit an independant categorical variable (StressCat) 
+# therefore I use the Kruskal-Wallis test
+kruskal.test(HeartRate, StressCat)
+
+# p-value is < 0.05 so we reject H0 and conclude
+# that Heart Rate is effected by stress during sleep
+########################################################################################################################
 # to answer - REM is between 18% and 25% of sleep hours for low stress sufferers (< 2)
 # create a new column REMRate to represent the proportion of rem sleep in total sleep
 #sleepData$REMRate <- sleepData$REMinHrs/sleepData$SleepHrs
@@ -131,11 +178,7 @@ opar <- par(no.readonly = TRUE) # records current settings for plots
 par(mfrow = c(3,3)) # plot side by side
 
 # to test for normal distribution
-hist(sleepData$SnoringRate, 
-     main = "Snoring Rate", 
-     col = "blue",
-     ylab = "Frequency",
-     xlab = "Snoring rate")
+
 
 hist(sleepData$SleepHrs, 
      main = "Sleep hours", 
@@ -143,23 +186,11 @@ hist(sleepData$SleepHrs,
      ylab = "Frequency",
      xlab = "Sleep hours")
 
-hist(sleepData$BodyTemp, 
-     main = "Body Temperature F", 
-     col = "blue",
-     ylab = "Frequency",
-     xlab = "Temperature")
-
 hist(sleepData$Movement, 
      main = "Movement", 
      col = "blue",
      ylab = "Frequency",
      xlab = "Movement")
-
-hist(sleepData$BloodOxygen, 
-     main = "Blood Oxygen %", 
-     col = "blue",
-     ylab = "Frequency",
-     xlab = "Blood Oxygen %")
 
 hist(sleepData$REM, 
      main = "REM in minutes", 
