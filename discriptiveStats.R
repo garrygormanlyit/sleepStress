@@ -14,6 +14,12 @@ sleepData[1:15, ]
 summary(sleepData)
 dim(sleepData) # 630 rows 9 columns
 
+install.packages("mice")
+library(mice)
+# 15 records have missing NI address
+# 10 have missing type
+md.pattern(sleepData, rotate.names = TRUE)
+
 colSums(sleepData == 0) # shows sleepHrs has 127 entries with zero sleepHrs and StressLevel with 126 entries as zero
 noSleep <- sleepData[sleepData$SleepHrs == 0 & sleepData$REM > 0 & sleepData$SnoringRate > 0,]
 noSleep
@@ -67,7 +73,25 @@ par(mfrow = c(1,1))
 sleepData$StressCat <- factor(sleepData$StressLevel, 
                               labels = c("no stress", "mild stress", "moderated stress", "high stress", "extreme stress"),
                               ordered = TRUE)
+# lets look at the values of each variable from the perspective of stress level
+display_variables <- c("SnoringRate", "Movement", "REM", "SleepHrs", "HeartRate", "StressLevel")
 
+sleepData[which.max(sleepData$StressLevel), display_variables]
+sleepData[which.min(sleepData$StressLevel), display_variables] # gives the min value for each variable
+
+
+# shows that there is an even distribution of each stress level within the dataset 
+prop.table(table(sleepData$StressLevel))
+
+barplot(height = prop.table(table(sleepData$StressLevel)),
+        main = "Vote proportion by Region", 
+        ylab = "Frequency", 
+        xlab = "Region",
+        col = "blue")
+
+
+summary(sleepData)
+?factor
 # to analyse correlation of stressCat against HR
 # this demonstrates a correlation between the variables
 plot(sleepData$StressCat, sleepData$HeartRate, main = "Stress Category vs heart rate")
@@ -148,6 +172,8 @@ kruskal.test(HeartRate, StressCat)
 trustedData$REMRate <- trustedData$REMinHrs/trustedData$SleepHrs
 summary(trustedData)
 str(trustedData)
+
+
 
 # create a df of sleepers where REM rate is between 18% and 25%
 goodREMRate <- trustedData[trustedData$REMRate >= 0.18 & trustedData$REMRate <= 0.25,]
