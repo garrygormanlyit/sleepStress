@@ -73,11 +73,13 @@ par(mfrow = c(1,1))
 sleepData$StressCat <- factor(sleepData$StressLevel, 
                               labels = c("no stress", "mild stress", "moderated stress", "high stress", "extreme stress"),
                               ordered = TRUE)
-# lets look at the values of each variable from the perspective of stress level
-display_variables <- c("SnoringRate", "Movement", "REM", "SleepHrs", "HeartRate", "StressLevel")
 
-sleepData[which.max(sleepData$StressLevel), display_variables]
-sleepData[which.min(sleepData$StressLevel), display_variables] # gives the min value for each variable
+# lets look at the values of each variable from the perspective of stress level
+aggregate(sleepData$SnoringRate, list(sleepData$StressCat), FUN=mean)
+aggregate(sleepData$Movement, list(sleepData$StressCat), FUN=mean)
+aggregate(sleepData$REM, list(sleepData$StressCat), FUN=mean)
+aggregate(sleepData$SleepHrs, list(sleepData$StressCat), FUN=mean)
+aggregate(sleepData$HeartRate, list(sleepData$StressCat), FUN=mean)
 
 
 # shows that there is an even distribution of each stress level within the dataset 
@@ -155,6 +157,13 @@ with(sleepData, {qqnorm(HeartRate[StressCat == "extreme stress"],
 with(sleepData, tapply(HeartRate, StressCat, shapiro.test))
 # all categories of stress fall below the cutoff p-value of 0.05 confirming that the data is not normally distributed 
 # this means that the data is non-parametric in nature and should be analysed by non-parametric means
+
+# Kolmogorov-Smirnov test to confirm normality
+ks.test(sleepData$HeartRate[sleepData$StressCat == "no stress"], 'pnorm')
+ks.test(sleepData$HeartRate[sleepData$StressCat == "mild stress"], 'pnorm')
+ks.test(sleepData$HeartRate[sleepData$StressCat == "moderated stress"], 'pnorm')
+ks.test(sleepData$HeartRate[sleepData$StressCat == "high stress"], 'pnorm')
+ks.test(sleepData$HeartRate[sleepData$StressCat == "extreme stress"], 'pnorm')
 
 # after consulting the chart, i am examining a dependent continuous variable (HeartRate)
 # whit an independant categorical variable (StressCat) 
