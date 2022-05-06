@@ -143,3 +143,4 @@ kruskal.test(SleepHrs, StressCat) # p=2.2*10**-16
 # the correlation coefficient between SleepHrs and StressCat is p = 2.2*10**-16. 
 # This is below the 0.5 cut-off, therefore the null hypothesis can be rejected.
 
+write.csv(sleepData,"factoredStress.csv", row.names = FALSE)

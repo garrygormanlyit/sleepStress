@@ -96,7 +96,9 @@ summary(sleepData)
 ?factor
 # to analyse correlation of stressCat against HR
 # this demonstrates a correlation between the variables
-plot(sleepData$StressCat, sleepData$HeartRate, main = "Stress Category vs heart rate")
+plot(sleepData$StressCat, sleepData$HeartRate, main = "Stress Category vs heart rate",
+     xlab = "Stress category",
+     ylab = "Heart rate in beats per min")
 
 # this histogram tells us nothing
 hist(trustedData$StressLevel, 
@@ -111,7 +113,7 @@ library("lattice")
 attach(sleepData)
 histogram(~ HeartRate | StressCat,
           data = sleepData,
-          main = "Distribution of Stress Category data",
+          main = "Distribution of heart rate data by Stress Category",
           xlab = "Heart rate in beats per minute",
           ylab = "Stress Category")
 
